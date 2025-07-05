@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Informasi default untuk struk (tidak bisa diedit via UI)
     const defaultShopName = "HARINFOOD";
-    const defaultPhoneNumber = "62812353686643"; // <--- Nomor WhatsApp tujuan telah diubah di sini!
+    const defaultPhoneNumber = "6281235368643"; // <--- Nomor WhatsApp tujuan telah diubah di sini ke format Indonesia yang benar!
     const defaultFooterText = "Terima Kasih Atas Kunjungannya!";
 
     // Fungsi utilitas untuk memformat angka menjadi Rupiah
