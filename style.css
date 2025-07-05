@@ -1,0 +1,706 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); /* Gradien futuristik */
+    color: #e0e0e0;
+    line-height: 1.6;
+    scroll-behavior: smooth;
+    min-height: 100vh; /* Pastikan body minimal setinggi viewport */
+    display: flex;
+    flex-direction: column;
+    position: relative; /* Penting untuk posisi FAB */
+}
+
+header {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 1em 0;
+    text-align: center;
+    border-bottom: 3px solid #00f0ff; /* Garis bawah neon */
+    box-shadow: 0 4px 15px rgba(0, 240, 255, 0.4);
+}
+
+header h1 {
+    font-size: 3.5em;
+    color: #00f0ff;
+    text-shadow: 0 0 15px #00f0ff;
+    letter-spacing: 3px;
+    margin-top: 0.5em;
+    /* Default: terlihat di ponsel */
+    display: block;
+}
+
+header p {
+    font-size: 1.2em;
+    color: #a0a0a0;
+    /* Default: terlihat di ponsel */
+    display: block;
+}
+
+/* Sembunyikan h1 dan p di header untuk tablet dan desktop */
+@media (min-width: 769px) { 
+    header h1,
+    header p {
+        display: none;
+    }
+}
+
+
+/* Tata letak utama: Katalog di kiri, Keranjang + Form di kanan */
+.main-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr; /* 2/3 untuk produk, 1/3 untuk keranjang */
+    gap: 2em;
+    padding: 2em;
+    max-width: 1400px; /* Lebar maksimum bisa disesuaikan */
+    margin: 1em auto; 
+    flex-grow: 1; /* Memastikan main-layout mengisi sisa ruang */
+}
+
+/* Bagian katalog produk */
+#produk-list {
+    background: rgba(255, 255, 255, 0.08); /* Latar belakang transparan */
+    border-radius: 15px;
+    padding: 1.5em;
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    backdrop-filter: blur(5px); /* Efek blur kaca */
+
+    /* Default: Produk grid 3 kolom di desktop */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
+    gap: 1.5em;
+    align-content: start; /* Pastikan konten rata atas jika ada sisa ruang */
+}
+
+.produk-item {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    padding: 1em;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid rgba(0, 240, 255, 0.2);
+}
+
+.produk-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 240, 255, 0.6);
+}
+
+.produk-item img {
+    max-width: 100%;
+    height: 120px; 
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 1em;
+    border: 2px solid #00f0ff;
+}
+
+.produk-item h3 {
+    color: #00f0ff;
+    margin-bottom: 0.2em; 
+    font-size: 1em; 
+}
+
+.produk-item p {
+    font-size: 0.9em; 
+    font-weight: bold;
+    color: #ffcc00; /* Warna harga */
+    margin-top: 0.2em; 
+}
+
+/* --- Gaya untuk Kontrol Kuantitas di Kartu Produk --- */
+.produk-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1em;
+    gap: 5px; /* Jarak antar tombol/angka */
+    width: 100%; /* Pastikan mengisi lebar */
+}
+
+.produk-controls button {
+    background: linear-gradient(45deg, #00f0ff, #00b0ff);
+    color: white;
+    border: none;
+    padding: 0.6em 0.8em; /* Padding lebih kecil untuk tombol +/- */
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em; /* Ukuran ikon di tombol +/- */
+    transition: background 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 3px 10px rgba(0, 240, 255, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: auto; /* Lebar menyesuaikan ikon */
+    flex-shrink: 0; /* Jangan menyusut */
+}
+
+.produk-controls button:hover {
+    background: linear-gradient(45deg, #00b0ff, #00f0ff);
+    transform: translateY(-2px);
+}
+
+.produk-controls .product-qty-display {
+    background: rgba(255, 255, 255, 0.15);
+    color: #00f0ff; /* Warna teks kuantitas */
+    padding: 0.6em 0.8em;
+    border-radius: 5px;
+    font-weight: bold;
+    min-width: 30px; /* Lebar minimum untuk angka */
+    text-align: center;
+    flex-grow: 1; /* Biarkan mengisi ruang di tengah */
+    font-size: 1em;
+}
+/* --- Akhir Gaya Kontrol Kuantitas --- */
+
+
+/* Bagian keranjang & form pemesanan */
+#keranjang-section {
+    background: rgba(255, 255, 255, 0.08); /* Latar belakang transparan */
+    border-radius: 15px;
+    padding: 1.5em;
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    backdrop-filter: blur(5px); /* Efek blur kaca */
+    display: flex; /* Untuk menata konten di dalamnya */
+    flex-direction: column;
+    gap: 1.5em;
+}
+
+#keranjang-section h2 {
+    text-align: center;
+    margin-bottom: 0.5em;
+}
+
+/* Gaya untuk item di keranjang */
+#keranjang-items {
+    max-height: 300px; /* Tinggi maksimal untuk keranjang agar bisa di-scroll */
+    overflow-y: auto; /* Aktifkan scroll vertikal */
+    padding-right: 10px; /* Agar scrollbar tidak menutupi teks */
+    margin-bottom: 1em;
+}
+
+#keranjang-items div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* Pusatkan secara vertikal */
+    padding: 0.5em 0;
+    border-bottom: 1px dotted rgba(255, 255, 255, 0.3);
+}
+
+#keranjang-items div:last-child {
+    border-bottom: none;
+}
+
+#keranjang-items span {
+    color: #ffcc00;
+}
+
+/* Gaya untuk input kuantitas di keranjang */
+#keranjang-items input[type="number"] {
+    width: 50px;
+    padding: 5px;
+    border-radius: 3px;
+    border: 1px solid rgba(0, 240, 255, 0.5);
+    background: rgba(255, 255, 255, 0.15);
+    color: #e0e0e0;
+    font-size: 0.9em;
+    text-align: center;
+    -moz-appearance: textfield; /* Sembunyikan panah di Firefox */
+}
+#keranjang-items input[type="number"]::-webkit-outer-spin-button,
+#keranjang-items input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+
+.keranjang-total-display { /* Kelas baru untuk display total */
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-top: 0.5em; /* Kurangi margin atas */
+    color: #00f0ff;
+    text-align: right;
+}
+
+#keranjang-total {
+    color: #ffcc00;
+}
+
+#clear-keranjang {
+    background: linear-gradient(45deg, #ff4d4d, #ff8c8c);
+    color: white;
+    border: none;
+    padding: 0.8em 1.5em;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    margin-top: 0.5em; /* Kurangi margin atas */
+    transition: background 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 3px 10px rgba(255, 77, 77, 0.4);
+    width: 100%; /* Lebar penuh */
+}
+#clear-keranjang:hover {
+    background: linear-gradient(45deg, #ff8c8c, #ff4d4d);
+    transform: translateY(-2px);
+}
+
+/* Container untuk form pemesanan */
+.pemesanan-container {
+    padding-top: 1.5em;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.pemesanan-container h2 {
+    margin-bottom: 1em;
+}
+
+.pemesanan-container label {
+    display: block;
+    margin-bottom: 0.5em;
+    color: #00f0ff;
+}
+
+.pemesanan-container input[type="text"],
+.pemesanan-container input[type="radio"],
+.pemesanan-container textarea {
+    margin-bottom: 1em;
+}
+
+.pemesanan-container input[type="text"],
+.pemesanan-container textarea {
+    width: calc(100% - 20px);
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #00f0ff;
+    background: rgba(255, 255, 255, 0.1);
+    color: #e0e0e0;
+    font-size: 1em;
+    resize: vertical;
+}
+
+.pemesanan-container input[type="text"]:focus,
+.pemesanan-container textarea:focus {
+    outline: none;
+    border-color: #00ff99;
+    box-shadow: 0 0 10px rgba(0, 255, 153, 0.6);
+}
+
+.pemesanan-container input[type="radio"] {
+    accent-color: #00f0ff;
+}
+
+/* Container untuk tombol aksi (cetak, WA) */
+.action-buttons {
+    display: flex;
+    flex-wrap: wrap; /* Agar tombol bisa turun baris */
+    gap: 10px;
+    margin-top: 1.5em;
+}
+
+.action-buttons button {
+    flex: 1 1 calc(50% - 10px); /* 2 tombol per baris di desktop */
+    min-width: 150px; /* Lebar minimum per tombol */
+    color: white;
+    border: none;
+    padding: 0.8em 1.5em;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 3px 10px rgba(255, 77, 77, 0.4);
+}
+
+#cetak-pesanan {
+    background: linear-gradient(45deg, #00ff99, #00cc66);
+    box-shadow: 0 3px 10px rgba(0, 255, 153, 0.4);
+}
+#cetak-pesanan:hover {
+    background: linear-gradient(45deg, #00cc66, #00ff99);
+    transform: translateY(-2px);
+}
+
+#pesan-whatsapp {
+    background: linear-gradient(45deg, #25D366, #128C7E);
+    box-shadow: 0 3px 10px rgba(37, 211, 102, 0.4);
+}
+#pesan-whatsapp:hover {
+    background: linear-gradient(45deg, #128C7E, #25D366);
+    transform: translateY(-2px);
+}
+
+/* Tombol tambah manual (FAB) ini tidak lagi di dalam .action-buttons */
+
+
+footer {
+    text-align: center;
+    padding: 1.5em;
+    background: rgba(0, 0, 0, 0.5);
+    margin-top: auto; /* Mendorong footer ke bawah */
+    color: #a0a0a0;
+    border-top: 3px solid #00f0ff;
+    box-shadow: 0 -4px 15px rgba(0, 240, 255, 0.4);
+}
+
+/* --- BARU: Gaya untuk FAB (Floating Action Button) --- */
+.fab-button {
+    position: fixed; /* Membuat tombol mengambang */
+    bottom: 30px; /* Jarak dari bawah */
+    right: 30px; /* Jarak dari kanan */
+    background: linear-gradient(45deg, #8a2be2, #4b0082); /* Warna ungu */
+    color: white;
+    width: 60px; /* Ukuran tombol bulat */
+    height: 60px;
+    border-radius: 50%; /* Membuatnya bulat */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.8em; /* Ukuran ikon */
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Bayangan */
+    transition: all 0.3s ease;
+    z-index: 999; /* Pastikan di atas elemen lain */
+}
+
+.fab-button:hover {
+    transform: scale(1.1) translateY(-2px); /* Efek zoom dan sedikit naik saat dihover */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    background: linear-gradient(45deg, #4b0082, #8a2be2);
+}
+
+/* Modal Styling (tetap sama) */
+.modal {
+    display: none; 
+    position: fixed; 
+    z-index: 1000; 
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgba(0,0,0,0.4); 
+    display: flex; 
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: auto; 
+    padding: 30px;
+    border: 1px solid #888;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 400px; 
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    color: #333; 
+}
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute; 
+    top: 10px;
+    right: 20px;
+    cursor: pointer;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modal-content label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #555;
+}
+
+.modal-content input[type="number"],
+.modal-content input[type="text"] {
+    width: calc(100% - 20px); 
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+    background-color: white;
+    color: #333;
+}
+
+.modal-content button {
+    background-color: #3498db;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.2s;
+}
+
+.modal-content button:hover {
+    background-color: #2980b9;
+}
+
+
+/* --- MEDIA QUERIES UNTUK RESPONSIVITAS --- */
+
+/* Untuk layar tablet (lebar maks 1024px, dan lebih besar dari 768px) */
+@media (max-width: 1024px) { 
+    .main-layout {
+        grid-template-columns: 1fr; /* Tata letak utama jadi satu kolom */
+        gap: 1.5em;
+    }
+    #produk-list {
+        padding: 1em;
+        /* Produk list menjadi 3 kolom di tablet (min-width 150px) */
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); 
+        gap: 1em;
+    }
+    .produk-item img {
+        height: 100px; 
+    }
+    .produk-item h3 {
+        font-size: 0.9em;
+    }
+    .produk-item p {
+        font-size: 0.8em;
+    }
+    .produk-item button {
+        padding: 0.7em 1em;
+        font-size: 0.9em;
+    }
+    #keranjang-section {
+        padding: 1em;
+    }
+    .action-buttons button {
+        flex: 1 1 100%; /* Tombol jadi 1 kolom di tablet */
+    }
+    /* FAB sedikit lebih kecil di tablet */
+    .fab-button {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5em;
+        bottom: 20px;
+        right: 20px;
+    }
+}
+
+/* Untuk layar ponsel (lebar maks 768px) */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+    .main-layout {
+        padding: 1em;
+        gap: 1em;
+    }
+    #produk-list {
+        padding: 0.8em;
+        /* Produk list menjadi 2 kolom di ponsel (min-width 120px) */
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); 
+        gap: 0.8em;
+    }
+    .produk-item img {
+        height: 90px; 
+    }
+    .produk-item h3 {
+        font-size: 0.85em;
+    }
+    .produk-item p {
+        font-size: 0.75em;
+    }
+    .produk-item button {
+        padding: 0.6em 0.8em;
+        font-size: 0.8em;
+    }
+    #keranjang-section {
+        padding: 0.8em;
+    }
+    h1, h2 {
+        font-size: 1.8em;
+        margin-bottom: 15px;
+    }
+    .keranjang-total-display {
+        font-size: 1.1em;
+    }
+    /* FAB lebih kecil lagi di ponsel */
+    .fab-button {
+        width: 45px;
+        height: 45px;
+        font-size: 1.3em;
+        bottom: 15px;
+        right: 15px;
+    }
+}
+
+/* Untuk layar sangat kecil (lebar maks 480px) */
+@media (max-width: 480px) {
+    #produk-list {
+        gap: 0.5em; /* Jarak paling rapat */
+    }
+    .produk-item {
+        padding: 0.6em; /* Padding lebih kecil */
+    }
+    .produk-item img {
+        height: 70px; /* Tinggi gambar paling kecil */
+    }
+    .produk-item h3 {
+        font-size: 0.7em;
+    }
+    .produk-item p {
+        font-size: 0.6em;
+    }
+    .produk-item button {
+        padding: 0.4em 0.6em;
+        font-size: 0.75em;
+    }
+}
+
+
+/* --- Gaya untuk Cetak (Printer Bluetooth 58mm) --- */
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap');
+
+@media print {
+    body * {
+        visibility: hidden !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: none !important;
+    }
+
+    #print-area {
+        visibility: visible !important;
+        position: absolute !important; 
+        left: 0 !important;
+        top: 0 !important;
+        width: 58mm !important; 
+        padding: 5mm !important; 
+        box-sizing: border-box !important; 
+        font-family: 'Roboto Mono', monospace !important; 
+        font-size: 10px !important; /* Ukuran font umum untuk struk */
+        color: #000 !important; 
+        background: white !important; 
+        line-height: 1.2 !important; 
+        margin: 0 !important; 
+    }
+
+    #print-area * {
+        visibility: visible !important;
+        color: #000 !important; 
+        font-weight: normal !important; 
+    }
+
+    /* Styling Header Struk */
+    #print-area .print-header {
+        text-align: center !important;
+        margin-bottom: 5px !important;
+        border-bottom: 1px dashed #000 !important;
+        padding-bottom: 5px !important;
+    }
+    #print-area .print-header h2 {
+        margin: 0 !important;
+        font-size: 1.5em !important; 
+        font-weight: 700 !important; 
+        line-height: 1.2 !important;
+        color: #000 !important;
+    }
+    #print-area .print-header p {
+        margin: 0 !important;
+        font-size: 9px !important; 
+        line-height: 1.2 !important;
+        font-weight: bold !important; 
+    }
+
+    /* Styling Informasi Transaksi */
+    #print-area .print-info {
+        text-align: left !important;
+        margin-top: 5px !important;
+        margin-bottom: 5px !important;
+    }
+    #print-area .print-info p {
+        margin: 0 !important;
+        font-size: 9px !important; 
+        line-height: 1.2 !important;
+        font-weight: bold !important; 
+    }
+
+    /* Styling Keterangan Tambahan */
+    #print-area .print-notes {
+        margin-top: 5px !important;
+        margin-bottom: 10px !important;
+        font-size: 9px !important; 
+        font-weight: bold !important; 
+        border-top: 1px dashed #000 !important;
+        padding-top: 5px !important;
+    }
+
+    /* Garis pembatas */
+    #print-area hr {
+        border: none !important;
+        border-top: 1px dashed #000 !important;
+        height: 0 !important;
+        margin: 8px 0 !important; 
+    }
+
+    /* Styling Tabel Item Produk */
+    #print-area table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        margin: 5px 0 !important; 
+    }
+    #print-area thead {
+        display: none !important; 
+    }
+    #print-area tbody tr {
+        page-break-inside: avoid !important; 
+    }
+    #print-area th, #print-area td {
+        padding: 1px 0 !important; 
+        text-align: left !important;
+        font-size: 10px !important; 
+    }
+
+    /* Kolom Nama Produk */
+    #print-area td:nth-child(1) { 
+        width: 70% !important; 
+        word-wrap: break-word !important; 
+        font-weight: bold !important; 
+    }
+    /* Kolom Qty x Harga Satuan */
+    #print-area td:nth-child(2) { 
+        width: 30% !important; 
+        text-align: right !important; 
+        font-weight: normal !important; 
+    }
+
+    /* Styling Total */
+    #print-area .total-row {
+        font-size: 1.1em !important;
+        font-weight: bold !important;
+        text-align: right !important;
+        margin-top: 10px !important;
+        padding-top: 5px !important;
+        border-top: 1px dashed #000 !important;
+        padding-bottom: 5px !important;
+    }
+    #print-area .total-row span {
+        float: left !important; 
+    }
+
+    /* Styling Footer Struk */
+    #print-area .thank-you {
+        text-align: center !important;
+        margin-top: 15px !important;
+        font-size: 0.9em !important;
+        line-height: 1.4 !important;
+        font-weight: bold !important; 
+    }
+}
