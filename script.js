@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Informasi default untuk struk (tidak bisa diedit via UI)
     const defaultShopName = "HARINFOOD";
-    const defaultPhoneNumber = "6181235368643"; // <--- Nomor WhatsApp tujuan telah diubah di sini!
+    const defaultPhoneNumber = "62812353686643"; // <--- Nomor WhatsApp tujuan telah diubah di sini!
     const defaultFooterText = "Terima Kasih Atas Kunjungannya!";
 
     // Fungsi utilitas untuk memformat angka menjadi Rupiah
@@ -413,7 +413,6 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('Struk telah disiapkan di WhatsApp. Silakan pilih kontak dan kirim!');
     });
 
-    // Event listener untuk FAB (Tombol mengambang)
     addManualOrderFab.addEventListener('click', () => {
         manualOrderModal.style.display = 'flex'; // Tampilkan modal manual
         manualProductNameInput.value = ''; // Reset input
@@ -421,12 +420,10 @@ document.addEventListener('DOMContentLoaded', () => {
         manualProductQtyInput.value = '1';
     });
 
-    // Fungsi untuk menutup modal pesanan manual
     window.closeManualOrderModal = function() {
         manualOrderModal.style.display = 'none';
     };
 
-    // Fungsi untuk menambahkan item manual ke keranjang
     window.addManualOrderItem = function() {
         const name = manualProductNameInput.value.trim();
         const price = parseFloat(manualProductPriceInput.value);
