@@ -5,60 +5,84 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Katalog HARINFOOD</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
+<div id="namaPemesanModal" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.6); align-items:center; justify-content:center;">
+  <div style="background:#222; padding:2em 2em 1em 2em; border-radius:12px; box-shadow:0 8px 40px #000; max-width:90vw;">
+    <h2>Isi Nama Anda</h2>
+    <input type="text" id="inputNamaPemesan" style="width:100%;padding:0.6em;font-size:1.1em;">
+    <button id="btnSimpanNamaPemesan" style="margin-top:1em; padding:0.7em 2em; border-radius:8px; background:#00f0ff; color:#222; border:none; font-weight:bold;">Simpan</button>
+  </div>
+</div>
 <body>
-    <header>
-        </header>
-
+    <header></header>
     <div class="main-layout">
-        <section id="produk-list">
-            </section>
-
-        <section id="keranjang-section">
-            <h2>Keranjang Belanja</h2>
-            <div id="keranjang-items">
-                </div>
-            <p class="keranjang-total-display">Total: <span id="keranjang-total">0</span></p>
-            <button id="clear-keranjang">Bersihkan Keranjang</button>
-
+        <section id="menu-produk-section">
+            <h2 class="section-title">Daftar Menu HARINFOOD</h2>
+            <div id="produk-list" class="produk-grid"></div>
+        </section>
+        <section id="keranjang-form-section">
+            <h2 class="section-title">Keranjang Belanja</h2>
+            <table class="keranjang-table">
+                <thead>
+                    <tr>
+                        <th>Produk</th>
+                        <th>Qty</th>
+                        <th>Harga</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="keranjang-items">
+                    <tr><td colspan="4" class="empty-cart-message">Keranjang kosong.</td></tr>
+                </tbody>
+            </table>
+            <p class="keranjang-total-display">Total: <span id="keranjang-total">Rp 0</span></p>
+            <div class="pembayaran-section-inline">
+                <label for="nominal-pembayaran">Nominal Pembayaran:</label>
+                <input type="number" id="nominal-pembayaran" min="0" value="0">
+                <p>Kembalian: <span id="kembalian-display">Rp 0</span></p>
+            </div>
             <div class="pemesanan-container">
-                <h2>Detail Pemesanan</h2>
+                <h2 class="section-title">Detail Pemesanan</h2>
                 <label for="nama-pemesan">Nama Pemesan:</label>
                 <input type="text" id="nama-pemesan" required>
-
                 <label for="alamat-pemesan">Alamat Lengkap:</label>
                 <textarea id="alamat-pemesan" rows="3" required></textarea>
-
-                <label for="keterangan-pesanan">Keterangan Tambahan (Opsional):</label>
+                <label for="keterangan-pesanan">Keterangan Pesanan (Opsional):</label>
                 <textarea id="keterangan-pesanan" rows="2"></textarea>
-
-                <label>Pilihan:</label>
-                <input type="radio" id="makan-disini" name="opsi-makan" value="Makan di Sini" checked>
-                <label for="makan-disini">Makan di Sini</label>
+                <label style="color:white; font-size:10px;font-style: italic;">Silahkan memesan dengan menekan tombol di bawah !</label>
                 <input type="radio" id="dibawa-pulang" name="opsi-makan" value="Dibawa Pulang">
                 <label for="dibawa-pulang">Dibawa Pulang</label>
-
+                <input type="radio" id="makan-disini" name="opsi-makan" value="Makan di Sini" checked>
+                <label for="makan-disini">Makan di Sini</label>
                 <div class="action-buttons">
-                    <button id="cetak-pesanan">Cetak Pesanan</button>
-                    <button id="pesan-whatsapp">Pesan via WhatsApp</button>
-                    </div>
+                    <button id="pesan-whatsapp" class="btn-action btn-whatsapp"><i class="fab fa-whatsapp"></i> TEKAN UNTUK MEMESAN</button>
+                </div>
             </div>
         </section>
     </div>
-
     <footer>
         <p>&copy; 2025 HARINFOOD. All Rights Reserved.</p>
     </footer>
-
-    <div class="fab-button" id="add-manual-order-fab">
+    <div class="fab-button fab-manual" id="add-manual-order-fab" title="Tambah Pesanan Manual">
         <i class="fas fa-shopping-basket"></i>
+    </div>
+    <div class="fab-button fab-clear" id="clear-cart-fab" title="Bersihkan Keranjang">
+        <i class="fas fa-trash"></i>
+    </div>
+    <div class="fab-button fab-print" id="print-order-fab" title="Cetak Struk">
+        <i class="fas fa-print"></i>
+    </div>
+    <div class="fab-button fab-barcode" id="scan-barcode-fab" title="Scan Barcode">
+        <i class="fas fa-barcode"></i>
     </div>
 
     <div id="manualOrderModal" class="modal">
         <div class="modal-content">
             <span class="close-button" onclick="closeManualOrderModal()">&times;</span>
-            <h2>Tambah Pesanan Manual</h2>
+            <h2 class="modal-title">Tambah Pesanan Manual</h2>
             <label for="manualProductName">Nama Produk:</label>
             <input type="text" id="manualProductName" required>
             <label for="manualProductPrice">Harga Satuan:</label>
@@ -69,6 +93,17 @@
         </div>
     </div>
 
+    <div id="barcodeScannerModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeBarcodeScannerModal()">&times;</span>
+            <h2 class="modal-title">Scan Barcode Produk</h2>
+            <div id="interactive" class="viewport"></div>
+            <p class="scan-feedback" id="scan-feedback"></p>
+            <button id="stop-scanner-button" style="display:none; margin-top: 15px; background-color: var(--button-clear-bg);">Stop Scan</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

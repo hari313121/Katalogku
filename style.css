@@ -1,306 +1,371 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap');
+
+/* ====== Variabel Utama ====== */
+:root {
+    --primary-bg-color: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    --secondary-bg-color: rgba(255, 255, 255, 0.08);
+    --border-neon-color: #00f0ff;
+    --shadow-neon-color: rgba(0, 240, 255, 0.4);
+    --text-primary-color: #e0e0e0;
+    --text-accent-color: #00f0ff;
+    --text-price-color: #ffcc00;
+    --button-default-bg: linear-gradient(45deg, #00f0ff, #00b0ff);
+    --button-clear-bg: linear-gradient(45deg, #ff4d4d, #ff8c8c);
+    --button-whatsapp-bg: linear-gradient(45deg, #25D366, #128C7E);
+    --button-manual-bg: linear-gradient(45deg, #8a2be2, #4b0082);
+    --input-border-color: #00f0ff;
+    --input-bg: rgba(255, 255, 255, 0.1);
+    --table-header-bg: rgba(255, 255, 255, 0.1);
+    --danger-color: #dc3545;
+}
+
+/* ====== Global ====== */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Poppins', sans-serif;
     margin: 0;
-    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); /* Gradien futuristik */
-    color: #e0e0e0;
+    background: var(--primary-bg-color);
+    color: var(--text-primary-color);
     line-height: 1.6;
     scroll-behavior: smooth;
-    min-height: 100vh; /* Pastikan body minimal setinggi viewport */
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
-    position: relative; /* Penting untuk posisi FAB */
+    position: relative;
+    overflow-x: hidden;
 }
-
 header {
-    background: rgba(0, 0, 0, 0.5);
+    background: transparent;
     padding: 1em 0;
     text-align: center;
-    border-bottom: 3px solid #00f0ff; /* Garis bawah neon */
-    box-shadow: 0 4px 15px rgba(0, 240, 255, 0.4);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+footer {
+    text-align: center;
+    padding: 1.5em;
+    background: rgba(0, 0, 0, 0.5);
+    margin-top: auto;
+    color: var(--text-primary-color);
+    border-top: 3px solid var(--border-neon-color);
+    box-shadow: 0 -4px 15px var(--shadow-neon-color);
 }
 
-header h1 {
-    font-size: 3.5em;
-    color: #00f0ff;
-    text-shadow: 0 0 15px #00f0ff;
-    letter-spacing: 3px;
-    margin-top: 0.5em;
-    /* Default: terlihat di ponsel */
-    display: block;
-}
-
-header p {
-    font-size: 1.2em;
-    color: #a0a0a0;
-    /* Default: terlihat di ponsel */
-    display: block;
-}
-
-/* Sembunyikan h1 dan p di header untuk tablet dan desktop */
-@media (min-width: 769px) { 
-    header h1,
-    header p {
-        display: none;
-    }
-}
-
-
-/* Tata letak utama: Katalog di kiri, Keranjang + Form di kanan */
+/* ====== Layout ====== */
 .main-layout {
     display: grid;
-    grid-template-columns: 2fr 1fr; /* 2/3 untuk produk, 1/3 untuk keranjang */
+    grid-template-columns: 2fr 1fr;
     gap: 2em;
     padding: 2em;
-    max-width: 1400px; /* Lebar maksimum bisa disesuaikan */
-    margin: 1em auto; 
-    flex-grow: 1; /* Memastikan main-layout mengisi sisa ruang */
+    max-width: 1400px;
+    margin: 1em auto;
+    flex-grow: 1;
 }
 
-/* Bagian katalog produk */
-#produk-list {
-    background: rgba(255, 255, 255, 0.08); /* Latar belakang transparan */
+#menu-produk-section,
+#keranjang-form-section {
+    background: var(--secondary-bg-color);
     border-radius: 15px;
     padding: 1.5em;
-    box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+    box-shadow: 0 0 20px var(--shadow-neon-color);
     border: 1px solid rgba(0, 240, 255, 0.3);
-    backdrop-filter: blur(5px); /* Efek blur kaca */
-
-    /* Default: Produk grid 3 kolom di desktop */
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
-    gap: 1.5em;
-    align-content: start; /* Pastikan konten rata atas jika ada sisa ruang */
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
 }
 
+.section-title {
+    color: var(--text-accent-color);
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 1.5em;
+    font-size: 2em;
+}
+
+/* ====== Katalog Produk ====== */
+#produk-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5em;
+    align-content: start;
+    flex-grow: 1;
+}
 .produk-item {
     background: rgba(255, 255, 255, 0.12);
     border-radius: 10px;
     padding: 1em;
     text-align: center;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
     border: 1px solid rgba(0, 240, 255, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
 }
-
 .produk-item:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 240, 255, 0.6);
+    box-shadow: 0 8px 25px var(--shadow-neon-color);
+    background: rgba(255, 255, 255, 0.15);
 }
-
 .produk-item img {
-    max-width: 100%;
-    height: 120px; 
+    width: 100%;
+    aspect-ratio: 1/1;
+    height: auto;
     object-fit: cover;
     border-radius: 8px;
     margin-bottom: 1em;
-    border: 2px solid #00f0ff;
+    border: 2px solid var(--border-neon-color);
+    background: #111;
+    display: block;
+    max-width: 100%;
+    min-height: 0;
 }
-
 .produk-item h3 {
-    color: #00f0ff;
-    margin-bottom: 0.2em; 
-    font-size: 1em; 
+    color: var(--text-accent-color);
+    margin-bottom: 0.2em;
+    font-size: 1em;
+    font-weight: 600;
 }
-
 .produk-item p {
-    font-size: 0.9em; 
+    font-size: 0.9em;
     font-weight: bold;
-    color: #ffcc00; /* Warna harga */
-    margin-top: 0.2em; 
+    color: var(--text-price-color);
+    margin-top: 0.2em;
 }
 
-/* --- Gaya untuk Kontrol Kuantitas di Kartu Produk --- */
+/* ====== Qty Control di Katalog ====== */
 .produk-controls {
     display: flex;
     justify-content: center;
     align-items: center;
     margin-top: 1em;
-    gap: 5px; /* Jarak antar tombol/angka */
-    width: 100%; /* Pastikan mengisi lebar */
+    gap: 5px;
+    width: 100%;
 }
-
-.produk-controls button {
-    background: linear-gradient(45deg, #00f0ff, #00b0ff);
-    color: white;
+.qty-btn {
+    background: var(--button-default-bg);
+    color: #fff;
     border: none;
-    padding: 0.6em 0.8em; /* Padding lebih kecil untuk tombol +/- */
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1em; /* Ukuran ikon di tombol +/- */
-    transition: background 0.3s ease, transform 0.2s ease;
-    box-shadow: 0 3px 10px rgba(0, 240, 255, 0.4);
+    border-radius: 50%;
+    width: 2.2em;
+    height: 2.2em;
     display: flex;
-    justify-content: center;
     align-items: center;
-    width: auto; /* Lebar menyesuaikan ikon */
-    flex-shrink: 0; /* Jangan menyusut */
+    justify-content: center;
+    font-size: 1.3em;
+    cursor: pointer;
+    box-shadow: 0 2px 8px var(--shadow-neon-color);
+    transition: background 0.2s, box-shadow 0.2s;
 }
-
-.produk-controls button:hover {
-    background: linear-gradient(45deg, #00b0ff, #00f0ff);
-    transform: translateY(-2px);
+.qty-btn:active {
+    background: var(--button-clear-bg);
 }
-
-.produk-controls .product-qty-display {
-    background: rgba(255, 255, 255, 0.15);
-    color: #00f0ff; /* Warna teks kuantitas */
-    padding: 0.6em 0.8em;
-    border-radius: 5px;
+.minus-btn {
+    background: var(--button-clear-bg);
+}
+.minus-btn:hover {
+    background: linear-gradient(45deg, #c0392b, #e74c3c);
+}
+.qty-value {
+    width: 2.5em;
+    text-align: center;
+    font-size: 1.1em;
+    color: var(--text-accent-color);
     font-weight: bold;
-    min-width: 30px; /* Lebar minimum untuk angka */
-    text-align: center;
-    flex-grow: 1; /* Biarkan mengisi ruang di tengah */
-    font-size: 1em;
-}
-/* --- Akhir Gaya Kontrol Kuantitas --- */
-
-
-/* Bagian keranjang & form pemesanan */
-#keranjang-section {
-    background: rgba(255, 255, 255, 0.08); /* Latar belakang transparan */
-    border-radius: 15px;
-    padding: 1.5em;
-    box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
-    border: 1px solid rgba(0, 240, 255, 0.3);
-    backdrop-filter: blur(5px); /* Efek blur kaca */
-    display: flex; /* Untuk menata konten di dalamnya */
-    flex-direction: column;
-    gap: 1.5em;
+    background: transparent;
+    border: none;
+    outline: none;
+    pointer-events: none;
 }
 
-#keranjang-section h2 {
-    text-align: center;
-    margin-bottom: 0.5em;
-}
-
-/* Gaya untuk item di keranjang */
-#keranjang-items {
-    max-height: 300px; /* Tinggi maksimal untuk keranjang agar bisa di-scroll */
-    overflow-y: auto; /* Aktifkan scroll vertikal */
-    padding-right: 10px; /* Agar scrollbar tidak menutupi teks */
+/* ====== Keranjang ====== */
+.keranjang-table {
+    width: 100%;
+    border-collapse: collapse;
     margin-bottom: 1em;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    overflow: hidden;
 }
-
-#keranjang-items div {
-    display: flex;
-    justify-content: space-between;
-    align-items: center; /* Pusatkan secara vertikal */
-    padding: 0.5em 0;
-    border-bottom: 1px dotted rgba(255, 255, 255, 0.3);
+.keranjang-table thead th {
+    background-color: var(--table-header-bg);
+    padding: 0.8em;
+    text-align: left;
+    color: var(--text-accent-color);
+    border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+    font-size: 0.9em;
+    font-weight: 600;
 }
-
-#keranjang-items div:last-child {
+#keranjang-items tr {
+    border-bottom: 1px dotted rgba(255, 255, 255, 0.1);
+}
+#keranjang-items tr:last-child {
     border-bottom: none;
 }
-
-#keranjang-items span {
-    color: #ffcc00;
-}
-
-/* Gaya untuk input kuantitas di keranjang */
-#keranjang-items input[type="number"] {
-    width: 50px;
-    padding: 5px;
-    border-radius: 3px;
-    border: 1px solid rgba(0, 240, 255, 0.5);
-    background: rgba(255, 255, 255, 0.15);
-    color: #e0e0e0;
+#keranjang-items td {
+    padding: 0.6em 0.5em;
+    vertical-align: middle;
     font-size: 0.9em;
-    text-align: center;
-    -moz-appearance: textfield; /* Sembunyikan panah di Firefox */
+    color: var(--text-primary-color);
 }
-#keranjang-items input[type="number"]::-webkit-outer-spin-button,
-#keranjang-items input[type="number"]::-webkit-inner-spin-button {
+#keranjang-items td:first-child {
+    width: 50%;
+    color: #fff;
+    font-weight: bold;
+}
+#keranjang-items td:nth-child(2) {
+    width: 15%;
+    text-align: center;
+}
+#keranjang-items td:nth-child(3) {
+    width: 25%;
+    text-align: right;
+    color: var(--text-price-color);
+}
+#keranjang-items td:last-child {
+    width: 10%;
+    text-align: right;
+}
+#keranjang-items td input[type="number"] {
+    width: 40px;
+    padding: 3px;
+    border-radius: 3px;
+    border: 1px solid var(--input-border-color);
+    background: var(--input-bg);
+    color: var(--text-primary-color);
+    font-size: 0.8em;
+    text-align: center;
+    -moz-appearance: textfield;
+}
+#keranjang-items td input[type="number"]::-webkit-outer-spin-button,
+#keranjang-items td input[type="number"]::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
-
-
-.keranjang-total-display { /* Kelas baru untuk display total */
-    font-size: 1.2em;
-    font-weight: bold;
-    margin-top: 0.5em; /* Kurangi margin atas */
-    color: #00f0ff;
-    text-align: right;
-}
-
-#keranjang-total {
-    color: #ffcc00;
-}
-
-#clear-keranjang {
-    background: linear-gradient(45deg, #ff4d4d, #ff8c8c);
+#keranjang-items td button {
+    background-color: var(--danger-color);
     color: white;
     border: none;
-    padding: 0.8em 1.5em;
-    border-radius: 5px;
+    padding: 3px 6px;
+    border-radius: 4px;
     cursor: pointer;
-    font-size: 1em;
-    margin-top: 0.5em; /* Kurangi margin atas */
-    transition: background 0.3s ease, transform 0.2s ease;
-    box-shadow: 0 3px 10px rgba(255, 77, 77, 0.4);
-    width: 100%; /* Lebar penuh */
+    font-size: 0.7em;
+    transition: background-color 0.2s, transform 0.2s;
 }
-#clear-keranjang:hover {
-    background: linear-gradient(45deg, #ff8c8c, #ff4d4d);
-    transform: translateY(-2px);
+#keranjang-items td button:hover {
+    background-color: #d32f2f;
+    transform: translateY(-1px);
+}
+.empty-cart-message {
+    text-align: center;
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.5);
+    padding: 1em;
+}
+.keranjang-total-display {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-top: 0.5em;
+    color: var(--text-accent-color);
+    text-align: right;
+}
+#keranjang-total {
+    color: var(--text-price-color);
 }
 
-/* Container untuk form pemesanan */
+/* ====== Input & Form ====== */
+.pembayaran-section-inline {
+    padding-top: 1em;
+    margin-top: 1em;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+}
+.pembayaran-section-inline label {
+    display: block;
+    margin-bottom: 0.5em;
+    color: var(--text-accent-color);
+}
+.pembayaran-section-inline input[type="number"] {
+    width: calc(100% - 20px);
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid var(--input-border-color);
+    background: var(--input-bg);
+    color: var(--text-primary-color);
+    font-size: 1em;
+    margin-bottom: 0.5em;
+}
+.pembayaran-section-inline input[type="number"]:focus {
+    outline: none;
+    border-color: var(--border-neon-color);
+    box-shadow: 0 0 10px var(--shadow-neon-color);
+}
+.pembayaran-section-inline p {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: var(--text-accent-color);
+    text-align: right;
+    margin-top: 0.5em;
+}
+#kembalian-display {
+    color: var(--text-price-color);
+}
 .pemesanan-container {
     padding-top: 1.5em;
     border-top: 1px solid rgba(255, 255, 255, 0.2);
+    margin-top: 1em;
 }
-
-.pemesanan-container h2 {
+.pemesanan-container .section-title {
+    font-size: 1.5em;
     margin-bottom: 1em;
+    text-align: center;
 }
-
 .pemesanan-container label {
     display: block;
     margin-bottom: 0.5em;
-    color: #00f0ff;
+    color: var(--text-accent-color);
 }
-
 .pemesanan-container input[type="text"],
 .pemesanan-container input[type="radio"],
 .pemesanan-container textarea {
     margin-bottom: 1em;
-}
-
-.pemesanan-container input[type="text"],
-.pemesanan-container textarea {
     width: calc(100% - 20px);
     padding: 10px;
     border-radius: 5px;
-    border: 1px solid #00f0ff;
-    background: rgba(255, 255, 255, 0.1);
-    color: #e0e0e0;
+    border: 1px solid var(--input-border-color);
+    background: var(--input-bg);
+    color: var(--text-primary-color);
     font-size: 1em;
     resize: vertical;
 }
-
 .pemesanan-container input[type="text"]:focus,
 .pemesanan-container textarea:focus {
     outline: none;
-    border-color: #00ff99;
-    box-shadow: 0 0 10px rgba(0, 255, 153, 0.6);
+    border-color: var(--border-neon-color);
+    box-shadow: 0 0 10px var(--shadow-neon-color);
 }
-
 .pemesanan-container input[type="radio"] {
-    accent-color: #00f0ff;
+    accent-color: var(--text-accent-color);
 }
-
-/* Container untuk tombol aksi (cetak, WA) */
 .action-buttons {
     display: flex;
-    flex-wrap: wrap; /* Agar tombol bisa turun baris */
+    flex-wrap: wrap;
     gap: 10px;
     margin-top: 1.5em;
 }
-
-.action-buttons button {
-    flex: 1 1 calc(50% - 10px); /* 2 tombol per baris di desktop */
-    min-width: 150px; /* Lebar minimum per tombol */
+.action-buttons .btn-whatsapp {
+    flex: 1 1 100%;
+    background: var(--button-whatsapp-bg);
+}
+.action-buttons .btn-whatsapp:hover {
+    background: linear-gradient(45deg, #1da851, #25D366);
+    transform: translateY(-2px);
+}
+.btn-action {
     color: white;
     border: none;
     padding: 0.8em 1.5em;
@@ -309,122 +374,112 @@ header p {
     font-size: 1em;
     transition: background 0.3s ease, transform 0.2s ease;
     box-shadow: 0 3px 10px rgba(255, 77, 77, 0.4);
+    width: 100%;
+    margin-top: 0.5em;
 }
 
-#cetak-pesanan {
-    background: linear-gradient(45deg, #00ff99, #00cc66);
-    box-shadow: 0 3px 10px rgba(0, 255, 153, 0.4);
-}
-#cetak-pesanan:hover {
-    background: linear-gradient(45deg, #00cc66, #00ff99);
-    transform: translateY(-2px);
-}
-
-#pesan-whatsapp {
-    background: linear-gradient(45deg, #25D366, #128C7E);
-    box-shadow: 0 3px 10px rgba(37, 211, 102, 0.4);
-}
-#pesan-whatsapp:hover {
-    background: linear-gradient(45deg, #128C7E, #25D366);
-    transform: translateY(-2px);
-}
-
-/* Tombol tambah manual (FAB) ini tidak lagi di dalam .action-buttons */
-
-
-footer {
-    text-align: center;
-    padding: 1.5em;
-    background: rgba(0, 0, 0, 0.5);
-    margin-top: auto; /* Mendorong footer ke bawah */
-    color: #a0a0a0;
-    border-top: 3px solid #00f0ff;
-    box-shadow: 0 -4px 15px rgba(0, 240, 255, 0.4);
-}
-
-/* --- BARU: Gaya untuk FAB (Floating Action Button) --- */
+/* ====== Floating Action Buttons (FAB) ====== */
 .fab-button {
-    position: fixed; /* Membuat tombol mengambang */
-    bottom: 30px; /* Jarak dari bawah */
-    right: 30px; /* Jarak dari kanan */
-    background: linear-gradient(45deg, #8a2be2, #4b0082); /* Warna ungu */
+    position: fixed;
     color: white;
-    width: 60px; /* Ukuran tombol bulat */
+    width: 60px;
     height: 60px;
-    border-radius: 50%; /* Membuatnya bulat */
+    border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 1.8em; /* Ukuran ikon */
+    font-size: 1.8em;
     cursor: pointer;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Bayangan */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     transition: all 0.3s ease;
-    z-index: 999; /* Pastikan di atas elemen lain */
+    z-index: 999;
 }
-
 .fab-button:hover {
-    transform: scale(1.1) translateY(-2px); /* Efek zoom dan sedikit naik saat dihover */
+    transform: scale(1.1) translateY(-2px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+.fab-print {
+    bottom: 30px;
+    right: 30px;
+    background: var(--button-default-bg);
+}
+.fab-clear {
+    bottom: 100px;
+    right: 30px;
+    background: var(--button-clear-bg);
+}
+.fab-clear:hover {
+    background: linear-gradient(45deg, #c0392b, #ff4d4d);
+}
+.fab-manual {
+    bottom: 170px;
+    right: 30px;
+    background: var(--button-manual-bg);
+}
+.fab-manual:hover {
     background: linear-gradient(45deg, #4b0082, #8a2be2);
 }
 
-/* Modal Styling (tetap sama) */
+/* NEW: Barcode Scan FAB */
+.fab-barcode {
+    bottom: 240px; /* Adjust position based on your existing FABs */
+    right: 30px;
+    background: linear-gradient(45deg, #007bff, #0056b3); /* Blue color for barcode */
+}
+.fab-barcode:hover {
+    background: linear-gradient(45deg, #0056b3, #007bff);
+}
+
+/* ====== Modal ====== */
 .modal {
-    display: none; 
-    position: fixed; 
-    z-index: 1000; 
+    display: none;
+    position: fixed;
+    z-index: 1000;
     left: 0;
     top: 0;
-    width: 100%; 
-    height: 100%; 
-    overflow: auto; 
-    background-color: rgba(0,0,0,0.4); 
-    display: flex; 
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
     justify-content: center;
     align-items: center;
 }
-
 .modal-content {
     background-color: #fefefe;
-    margin: auto; 
+    margin: auto;
     padding: 30px;
     border: 1px solid #888;
     border-radius: 10px;
     width: 80%;
-    max-width: 400px; 
+    max-width: 400px;
     position: relative;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    color: #333; 
+    color: #333;
+    transition: all 0.3s ease;
 }
-
 .close-button {
     color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    position: absolute; 
+    position: absolute;
     top: 10px;
     right: 20px;
+    font-size: 28px;
+    font-weight: bold;
     cursor: pointer;
 }
-
 .close-button:hover,
 .close-button:focus {
-    color: black;
+    color: #000;
     text-decoration: none;
-    cursor: pointer;
 }
-
 .modal-content label {
     display: block;
     margin-bottom: 8px;
     font-weight: 600;
-    color: #555;
+    color: #333;
 }
-
 .modal-content input[type="number"],
 .modal-content input[type="text"] {
-    width: calc(100% - 20px); 
+    width: calc(100% - 20px);
     padding: 10px;
     margin-bottom: 15px;
     border: 1px solid #ccc;
@@ -433,9 +488,8 @@ footer {
     background-color: white;
     color: #333;
 }
-
 .modal-content button {
-    background-color: #3498db;
+    background-color: #28a745;
     color: white;
     padding: 10px 20px;
     border: none;
@@ -444,130 +498,143 @@ footer {
     font-size: 1em;
     transition: background-color 0.2s;
 }
-
 .modal-content button:hover {
-    background-color: #2980b9;
+    background-color: #218838;
+}
+
+/* NEW: Barcode Scanner Modal Specific Styles */
+#barcodeScannerModal .modal-content {
+    background-color: #222; /* Darker background for scanner */
+    color: var(--text-primary-color);
+    border: 1px solid var(--border-neon-color);
+}
+#barcodeScannerModal .modal-title {
+    color: var(--text-accent-color);
+}
+#barcodeScannerModal .close-button {
+    color: var(--text-primary-color);
+}
+#barcodeScannerModal .close-button:hover,
+#barcodeScannerModal .close-button:focus {
+    color: var(--text-accent-color);
+}
+
+#interactive.viewport {
+    position: relative;
+    width: 100%;
+    height: 200px; /* Adjust height as needed */
+    overflow: hidden;
+    border: 2px solid var(--border-neon-color);
+    border-radius: 8px;
+    background-color: black; /* Ensure black background for camera feed */
+    margin-bottom: 1em;
+}
+
+#interactive.viewport canvas,
+#interactive.viewport video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Fill the container */
+}
+
+.scan-feedback {
+    text-align: center;
+    font-size: 0.9em;
+    color: var(--text-price-color);
+    min-height: 1.2em; /* Prevent layout shift */
 }
 
 
-/* --- MEDIA QUERIES UNTUK RESPONSIVITAS --- */
+/* ====== RESPONSIVE GRID PRODUK & LAYOUT ====== */
 
-/* Untuk layar tablet (lebar maks 1024px, dan lebih besar dari 768px) */
-@media (max-width: 1024px) { 
+/* Default (PC/tablet besar): 3 kolom */
+#produk-list {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+/* Tablet (≤1024px): tetap 3 kolom */
+@media (max-width: 1024px) {
     .main-layout {
-        grid-template-columns: 1fr; /* Tata letak utama jadi satu kolom */
-        gap: 1.5em;
+        grid-template-columns: 1fr 1fr;
+        padding: 1em;
+        gap: 1em;
     }
     #produk-list {
-        padding: 1em;
-        /* Produk list menjadi 3 kolom di tablet (min-width 150px) */
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); 
+        grid-template-columns: repeat(3, 1fr);
         gap: 1em;
     }
     .produk-item img {
-        height: 100px; 
+        height: auto;
     }
-    .produk-item h3 {
-        font-size: 0.9em;
-    }
-    .produk-item p {
-        font-size: 0.8em;
-    }
-    .produk-item button {
-        padding: 0.7em 1em;
-        font-size: 0.9em;
-    }
-    #keranjang-section {
-        padding: 1em;
-    }
-    .action-buttons button {
-        flex: 1 1 100%; /* Tombol jadi 1 kolom di tablet */
-    }
-    /* FAB sedikit lebih kecil di tablet */
     .fab-button {
         width: 50px;
         height: 50px;
-        font-size: 1.5em;
-        bottom: 20px;
-        right: 20px;
+        font-size: 1.3em;
     }
+    .fab-manual { bottom: 135px; right: 15px; }
+    .fab-clear  { bottom: 75px; right: 15px; }
+    .fab-print  { bottom: 15px; right: 15px; }
+    /* NEW: Barcode FAB Responsive */
+    .fab-barcode { bottom: 195px; right: 15px; }
+    #interactive.viewport { height: 180px; }
 }
 
-/* Untuk layar ponsel (lebar maks 768px) */
+/* HP (≤768px): produk 2 kolom */
 @media (max-width: 768px) {
-    body {
-        padding: 10px;
-    }
     .main-layout {
-        padding: 1em;
-        gap: 1em;
+        display: block;
+        padding: 0.5em;
+    }
+    #menu-produk-section, #keranjang-form-section {
+        padding: 0.8em;
+        margin-bottom: 1em;
     }
     #produk-list {
-        padding: 0.8em;
-        /* Produk list menjadi 2 kolom di ponsel (min-width 120px) */
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); 
+        grid-template-columns: repeat(2, 1fr);
         gap: 0.8em;
     }
-    .produk-item img {
-        height: 90px; 
-    }
-    .produk-item h3 {
-        font-size: 0.85em;
-    }
-    .produk-item p {
-        font-size: 0.75em;
-    }
-    .produk-item button {
-        padding: 0.6em 0.8em;
-        font-size: 0.8em;
-    }
-    #keranjang-section {
-        padding: 0.8em;
-    }
-    h1, h2 {
-        font-size: 1.8em;
-        margin-bottom: 15px;
-    }
-    .keranjang-total-display {
-        font-size: 1.1em;
-    }
-    /* FAB lebih kecil lagi di ponsel */
+    .produk-item img { height: auto; }
     .fab-button {
         width: 45px;
         height: 45px;
-        font-size: 1.3em;
-        bottom: 15px;
-        right: 15px;
+        font-size: 1em;
     }
+    .fab-manual { bottom: 100px; right: 10px; }
+    .fab-clear  { bottom: 55px; right: 10px; }
+    .fab-print  { bottom: 10px; right: 10px; }
+    /* NEW: Barcode FAB Responsive */
+    .fab-barcode { bottom: 145px; right: 10px; }
+    #interactive.viewport { height: 150px; }
 }
 
-/* Untuk layar sangat kecil (lebar maks 480px) */
+/* HP sangat kecil (≤480px): produk 2 kolom */
 @media (max-width: 480px) {
     #produk-list {
-        gap: 0.5em; /* Jarak paling rapat */
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.4em;
     }
     .produk-item {
-        padding: 0.6em; /* Padding lebih kecil */
+        padding: 0.4em;
     }
-    .produk-item img {
-        height: 70px; /* Tinggi gambar paling kecil */
+    .produk-item img { height: auto; }
+    .section-title { font-size: 1.1em; }
+    .fab-button {
+        width: 36px;
+        height: 36px;
+        font-size: 0.8em;
     }
-    .produk-item h3 {
-        font-size: 0.7em;
-    }
-    .produk-item p {
-        font-size: 0.6em;
-    }
-    .produk-item button {
-        padding: 0.4em 0.6em;
-        font-size: 0.75em;
-    }
+    .fab-manual { bottom: 78px; right: 7px; }
+    .fab-clear  { bottom: 43px; right: 7px; }
+    .fab-print  { bottom: 7px;  right: 7px; }
+    /* NEW: Barcode FAB Responsive */
+    .fab-barcode { bottom: 113px; right: 7px; }
+    #interactive.viewport { height: 120px; }
 }
 
-
-/* --- Gaya untuk Cetak (Printer Bluetooth 58mm) --- */
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap');
-
+/* ====== PRINT STRUK ====== */
 @media print {
     body * {
         visibility: hidden !important;
@@ -575,132 +642,112 @@ footer {
         padding: 0 !important;
         background: none !important;
     }
-
-    #print-area {
+    #print-area, #print-area * {
         visibility: visible !important;
-        position: absolute !important; 
+        color: #000 !important;
+        font-weight: normal !important;
+    }
+    #print-area {
+        position: absolute !important;
         left: 0 !important;
         top: 0 !important;
-        width: 58mm !important; 
-        padding: 5mm !important; 
-        box-sizing: border-box !important; 
-        font-family: 'Roboto Mono', monospace !important; 
-        font-size: 10px !important; /* Ukuran font umum untuk struk */
-        color: #000 !important; 
-        background: white !important; 
-        line-height: 1.2 !important; 
-        margin: 0 !important; 
+        width: 58mm !important;
+        padding: 5mm !important;
+        box-sizing: border-box !important;
+        font-family: 'Roboto Mono', monospace !important;
+        font-size: 10px !important;
+        background: white !important;
+        line-height: 1.2 !important;
+        margin: 0 !important;
     }
-
-    #print-area * {
-        visibility: visible !important;
-        color: #000 !important; 
-        font-weight: normal !important; 
-    }
-
-    /* Styling Header Struk */
-    #print-area .print-header {
+    .print-header {
         text-align: center !important;
         margin-bottom: 5px !important;
         border-bottom: 1px dashed #000 !important;
         padding-bottom: 5px !important;
     }
-    #print-area .print-header h2 {
+    .print-header h2 {
         margin: 0 !important;
-        font-size: 1.5em !important; 
-        font-weight: 700 !important; 
+        font-size: 1.5em !important;
+        font-weight: 700 !important;
         line-height: 1.2 !important;
-        color: #000 !important;
     }
-    #print-area .print-header p {
+    .print-header p {
         margin: 0 !important;
-        font-size: 9px !important; 
+        font-size: 9px !important;
         line-height: 1.2 !important;
-        font-weight: bold !important; 
+        font-weight: bold !important;
     }
-
-    /* Styling Informasi Transaksi */
-    #print-area .print-info {
+    .print-info {
         text-align: left !important;
         margin-top: 5px !important;
         margin-bottom: 5px !important;
     }
-    #print-area .print-info p {
+    .print-info p {
         margin: 0 !important;
-        font-size: 9px !important; 
+        font-size: 9px !important;
         line-height: 1.2 !important;
-        font-weight: bold !important; 
+        font-weight: bold !important;
     }
-
-    /* Styling Keterangan Tambahan */
-    #print-area .print-notes {
+    .print-notes {
         margin-top: 5px !important;
         margin-bottom: 10px !important;
-        font-size: 9px !important; 
-        font-weight: bold !important; 
-        border-top: 1px dashed #000 !important;
+        font-size: 9px !important;
+        font-weight: bold !important;
         padding-top: 5px !important;
     }
-
-    /* Garis pembatas */
-    #print-area hr {
-        border: none !important;
-        border-top: 1px dashed #000 !important;
+    hr {
+        border: 0.5px dashed #000 !important;
         height: 0 !important;
-        margin: 8px 0 !important; 
+        margin: 8px 0 !important;
     }
-
-    /* Styling Tabel Item Produk */
-    #print-area table {
-        width: 100% !important;
-        border-collapse: collapse !important;
-        margin: 5px 0 !important; 
-    }
-    #print-area thead {
-        display: none !important; 
-    }
-    #print-area tbody tr {
-        page-break-inside: avoid !important; 
-    }
-    #print-area th, #print-area td {
-        padding: 1px 0 !important; 
+    table { width: 100% !important; border-collapse: collapse !important; margin: 5px 0 !important; }
+    table thead { display: none !important; }
+    table tbody tr { page-break-inside: avoid !important; }
+    table td {
+        padding: 1px 0 !important;
         text-align: left !important;
-        font-size: 10px !important; 
+        font-size: 10px !important;
     }
-
-    /* Kolom Nama Produk */
-    #print-area td:nth-child(1) { 
-        width: 70% !important; 
-        word-wrap: break-word !important; 
-        font-weight: bold !important; 
+    table td:nth-child(1) {
+        width: 70% !important;
+        word-wrap: break-word !important;
+        font-weight: bold !important;
     }
-    /* Kolom Qty x Harga Satuan */
-    #print-area td:nth-child(2) { 
-        width: 30% !important; 
-        text-align: right !important; 
-        font-weight: normal !important; 
+    table td:nth-child(2) {
+        width: 30% !important;
+        text-align: right !important;
+        font-weight: normal !important;
     }
-
-    /* Styling Total */
-    #print-area .total-row {
+    .total-row {
         font-size: 1.1em !important;
         font-weight: bold !important;
         text-align: right !important;
-        margin-top: 10px !important;
+        margin-top: 5px !important;
         padding-top: 5px !important;
-        border-top: 1px dashed #000 !important;
         padding-bottom: 5px !important;
     }
-    #print-area .total-row span {
-        float: left !important; 
+    .total-row span { float: left !important; }
+    .print-payment-info {
+        font-size: 0.9em !important;
+        font-weight: bold !important;
+        text-align: right !important;
+        margin: 2px 0 !important;
     }
-
-    /* Styling Footer Struk */
-    #print-area .thank-you {
+    .print-payment-info span { float: left !important; }
+    .thank-you {
         text-align: center !important;
         margin-top: 15px !important;
         font-size: 0.9em !important;
         line-height: 1.4 !important;
-        font-weight: bold !important; 
+        font-weight: bold !important;
+    }
+    #print-area img {
+        max-width: 100% !important;
+        width: 45mm !important;
+        height: auto !important;
+        display: block !important;
+        margin: 0 auto !important;
+        padding-bottom: 5px !important;
     }
 }
