@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap');
 
 /* ====== Variabel Utama ====== */
@@ -18,6 +18,8 @@
     --input-bg: rgba(255, 255, 255, 0.1);
     --table-header-bg: rgba(255, 255, 255, 0.1);
     --danger-color: #dc3545;
+    --metode-btn-bg: rgba(0, 240, 255, 0.2); /* Warna tombol metode default */
+    --metode-btn-active-bg: var(--button-default-bg); /* Warna tombol aktif */
 }
 
 /* ====== Global ====== */
@@ -314,6 +316,51 @@ footer {
 #kembalian-display {
     color: var(--text-price-color);
 }
+
+/* Metode Pembayaran Section dengan Tombol */
+.metode-pembayaran-section {
+    padding-top: 1.5em;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    margin-top: 1em;
+}
+.metode-pembayaran-section .section-title {
+    font-size: 1.5em;
+    margin-bottom: 1em;
+    text-align: center;
+}
+.metode-pembayaran-buttons {
+    display: flex;
+    gap: 1em;
+    justify-content: center;
+    margin-top: 1em;
+}
+.metode-btn {
+    flex: 1; /* Agar tombol mengisi ruang yang tersedia */
+    max-width: 150px; /* Batasi lebar tombol */
+    padding: 0.8em 1.5em;
+    border: 2px solid var(--border-neon-color);
+    border-radius: 8px;
+    background: var(--metode-btn-bg);
+    color: var(--text-primary-color);
+    font-weight: 600;
+    font-size: 1em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+.metode-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--shadow-neon-color);
+}
+.metode-btn.active {
+    background: var(--metode-btn-active-bg);
+    color: #222; /* Ubah warna teks agar terlihat kontras dengan background aktif */
+    border-color: transparent; /* Atau warna lain yang menonjol */
+    box-shadow: 0 4px 15px var(--shadow-neon-color);
+    transform: translateY(0); /* Pastikan tidak ada transform saat aktif */
+}
+
+
 .pemesanan-container {
     padding-top: 1.5em;
     border-top: 1px solid rgba(255, 255, 255, 0.2);
@@ -420,7 +467,7 @@ footer {
     background: linear-gradient(45deg, #4b0082, #8a2be2);
 }
 
-/* NEW: Barcode Scan FAB */
+/* Barcode Scan FAB */
 .fab-barcode {
     bottom: 240px; /* Adjust position based on your existing FABs */
     right: 30px;
@@ -502,9 +549,8 @@ footer {
     background-color: #218838;
 }
 
-/* NEW: Barcode Scanner Modal Specific Styles */
 #barcodeScannerModal .modal-content {
-    background-color: #222; /* Darker background for scanner */
+    background-color: #222;
     color: var(--text-primary-color);
     border: 1px solid var(--border-neon-color);
 }
@@ -519,32 +565,12 @@ footer {
     color: var(--text-accent-color);
 }
 
-#interactive.viewport {
-    position: relative;
-    width: 100%;
-    height: 200px; /* Adjust height as needed */
-    overflow: hidden;
-    border: 2px solid var(--border-neon-color);
-    border-radius: 8px;
-    background-color: black; /* Ensure black background for camera feed */
-    margin-bottom: 1em;
-}
-
-#interactive.viewport canvas,
-#interactive.viewport video {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Fill the container */
-}
-
 .scan-feedback {
     text-align: center;
     font-size: 0.9em;
     color: var(--text-price-color);
-    min-height: 1.2em; /* Prevent layout shift */
+    min-height: 1.2em;
+    margin-top: 0.5em;
 }
 
 
@@ -577,9 +603,7 @@ footer {
     .fab-manual { bottom: 135px; right: 15px; }
     .fab-clear  { bottom: 75px; right: 15px; }
     .fab-print  { bottom: 15px; right: 15px; }
-    /* NEW: Barcode FAB Responsive */
     .fab-barcode { bottom: 195px; right: 15px; }
-    #interactive.viewport { height: 180px; }
 }
 
 /* HP (≤768px): produk 2 kolom */
@@ -596,7 +620,9 @@ footer {
         grid-template-columns: repeat(2, 1fr);
         gap: 0.8em;
     }
-    .produk-item img { height: auto; }
+    .produk-item img {
+        height: auto;
+    }
     .fab-button {
         width: 45px;
         height: 45px;
@@ -605,9 +631,7 @@ footer {
     .fab-manual { bottom: 100px; right: 10px; }
     .fab-clear  { bottom: 55px; right: 10px; }
     .fab-print  { bottom: 10px; right: 10px; }
-    /* NEW: Barcode FAB Responsive */
     .fab-barcode { bottom: 145px; right: 10px; }
-    #interactive.viewport { height: 150px; }
 }
 
 /* HP sangat kecil (≤480px): produk 2 kolom */
@@ -619,7 +643,9 @@ footer {
     .produk-item {
         padding: 0.4em;
     }
-    .produk-item img { height: auto; }
+    .produk-item img {
+        height: auto;
+    }
     .section-title { font-size: 1.1em; }
     .fab-button {
         width: 36px;
@@ -629,9 +655,7 @@ footer {
     .fab-manual { bottom: 78px; right: 7px; }
     .fab-clear  { bottom: 43px; right: 7px; }
     .fab-print  { bottom: 7px;  right: 7px; }
-    /* NEW: Barcode FAB Responsive */
     .fab-barcode { bottom: 113px; right: 7px; }
-    #interactive.viewport { height: 120px; }
 }
 
 /* ====== PRINT STRUK ====== */
@@ -645,7 +669,10 @@ footer {
     #print-area, #print-area * {
         visibility: visible !important;
         color: #000 !important;
-        font-weight: normal !important;
+        font-family: 'Poppins', sans-serif !important;
+        font-weight: 700 !important; /* Default tebal untuk semua teks di print-area */
+        font-size: 10px !important; /* Default ukuran font 10px */
+        line-height: 1.2 !important;
     }
     #print-area {
         position: absolute !important;
@@ -654,10 +681,7 @@ footer {
         width: 58mm !important;
         padding: 5mm !important;
         box-sizing: border-box !important;
-        font-family: 'Roboto Mono', monospace !important;
-        font-size: 10px !important;
         background: white !important;
-        line-height: 1.2 !important;
         margin: 0 !important;
     }
     .print-header {
@@ -666,18 +690,22 @@ footer {
         border-bottom: 1px dashed #000 !important;
         padding-bottom: 5px !important;
     }
-    .print-header h2 {
+    /* Style untuk nama toko di header cetak */
+    .print-header .shop-name-print {
         margin: 0 !important;
-        font-size: 1.5em !important;
-        font-weight: 700 !important;
+        font-size: 1.5em !important; /* Ukuran font lebih besar untuk nama toko (1.5 * 10px = 15px) */
+        font-weight: 900 !important; /* Sangat tebal */
         line-height: 1.2 !important;
     }
-    .print-header p {
+    /* Style untuk alamat dan telepon di header cetak */
+    .print-header .shop-address-print,
+    .print-header .shop-phone-print {
         margin: 0 !important;
-        font-size: 9px !important;
+        font-size: 1.1em !important; /* 1.1 * 10px = 11px */
         line-height: 1.2 !important;
-        font-weight: bold !important;
+        font-weight: 700 !important; /* Tetap tebal */
     }
+
     .print-info {
         text-align: left !important;
         margin-top: 5px !important;
@@ -685,15 +713,15 @@ footer {
     }
     .print-info p {
         margin: 0 !important;
-        font-size: 9px !important;
+        font-size: 1em !important; /* Tetap 10px */
         line-height: 1.2 !important;
-        font-weight: bold !important;
+        font-weight: 700 !important;
     }
     .print-notes {
         margin-top: 5px !important;
         margin-bottom: 10px !important;
-        font-size: 9px !important;
-        font-weight: bold !important;
+        font-size: 1em !important; /* Tetap 10px */
+        font-weight: 700 !important;
         padding-top: 5px !important;
     }
     hr {
@@ -707,21 +735,21 @@ footer {
     table td {
         padding: 1px 0 !important;
         text-align: left !important;
-        font-size: 10px !important;
+        font-size: 1em !important; /* Tetap 10px */
     }
     table td:nth-child(1) {
         width: 70% !important;
         word-wrap: break-word !important;
-        font-weight: bold !important;
+        font-weight: 800 !important; /* Lebih tebal untuk nama produk */
     }
     table td:nth-child(2) {
         width: 30% !important;
         text-align: right !important;
-        font-weight: normal !important;
+        font-weight: 700 !important; /* Tebal juga untuk harga */
     }
     .total-row {
-        font-size: 1.1em !important;
-        font-weight: bold !important;
+        font-size: 1.1em !important; /* Relatif terhadap 10px, jadi sekitar 11px */
+        font-weight: 900 !important; /* Sangat tebal untuk total */
         text-align: right !important;
         margin-top: 5px !important;
         padding-top: 5px !important;
@@ -729,8 +757,8 @@ footer {
     }
     .total-row span { float: left !important; }
     .print-payment-info {
-        font-size: 0.9em !important;
-        font-weight: bold !important;
+        font-size: 1em !important; /* Tetap 10px */
+        font-weight: 700 !important;
         text-align: right !important;
         margin: 2px 0 !important;
     }
@@ -738,9 +766,9 @@ footer {
     .thank-you {
         text-align: center !important;
         margin-top: 15px !important;
-        font-size: 0.9em !important;
+        font-size: 1em !important; /* Tetap 10px */
         line-height: 1.4 !important;
-        font-weight: bold !important;
+        font-weight: 700 !important;
     }
     #print-area img {
         max-width: 100% !important;

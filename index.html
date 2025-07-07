@@ -44,6 +44,13 @@
                 <input type="number" id="nominal-pembayaran" min="0" value="0">
                 <p>Kembalian: <span id="kembalian-display">Rp 0</span></p>
             </div>
+            <div class="metode-pembayaran-section">
+                <h3 class="section-title">Metode Pembayaran</h3>
+                <div class="metode-pembayaran-buttons">
+                    <button class="metode-btn active" id="metode-tunai" data-metode="Tunai">Tunai</button>
+                    <button class="metode-btn" id="metode-qris" data-metode="QRIS">QRIS</button>
+                </div>
+            </div>
             <div class="pemesanan-container">
                 <h2 class="section-title">Detail Pemesanan</h2>
                 <label for="nama-pemesan">Nama Pemesan:</label>
@@ -97,13 +104,13 @@
         <div class="modal-content">
             <span class="close-button" onclick="closeBarcodeScannerModal()">&times;</span>
             <h2 class="modal-title">Scan Barcode Produk</h2>
-            <div id="interactive" class="viewport"></div>
-            <p class="scan-feedback" id="scan-feedback"></p>
-            <button id="stop-scanner-button" style="display:none; margin-top: 15px; background-color: var(--button-clear-bg);">Stop Scan</button>
+            <label for="barcodeInput">Masukkan atau Scan Barcode:</label>
+            <input type="text" id="barcodeInput" autofocus>
+            <p class="scan-feedback" id="scan-feedback">Siap menerima barcode...</p>
+            <button id="submitBarcodeButton">Tambahkan</button>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

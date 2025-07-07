@@ -40,9 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- DATA PRODUK ---
     const produkData = [
-        // PENTING: Anda harus mengganti nilai barcode dengan barcode aktual produk Anda.
-        // Barcode ini adalah contoh format EAN-13.
-        { id: 1, nama: "Risol", harga: 3000, gambar: "risol.webp", barcode: "risol" },
+        { id: 1, nama: "Risol", harga: 3000, gambar: "risol.webp", barcode: "8997000000010" },
         { id: 2, nama: "Cibay", harga: 2500, gambar: "cibay.webp", barcode: "8997000000027" },
         { id: 3, nama: "Citung", harga: 2500, gambar: "citung.webp", barcode: "8997000000034" },
         { id: 4, nama: "Topokki", harga: 5000, gambar: "toppoki.webp", barcode: "8997000000041" },
@@ -61,7 +59,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const printOrderFab = document.getElementById('print-order-fab');
     const addManualOrderFab = document.getElementById('add-manual-order-fab');
     const clearCartFab = document.getElementById('clear-cart-fab');
-    // NEW: Barcode scanner FAB
     const scanBarcodeFab = document.getElementById('scan-barcode-fab');
     const pesanWhatsappBtn = document.getElementById('pesan-whatsapp');
     const namaPemesanInput = document.getElementById('nama-pemesan');
@@ -73,20 +70,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const manualProductNameInput = document.getElementById('manualProductName');
     const manualProductPriceInput = document.getElementById('manualProductPrice');
     const manualProductQtyInput = document.getElementById('manualProductQty');
-    // NEW: Barcode scanner modal and elements
+    
     const barcodeScannerModal = document.getElementById('barcodeScannerModal');
+    const barcodeInput = document.getElementById('barcodeInput');
     const scanFeedback = document.getElementById('scan-feedback');
-    const stopScannerButton = document.getElementById('stop-scanner-button');
+    const submitBarcodeButton = document.getElementById('submitBarcodeButton');
+
+    const metodePembayaranButtons = document.querySelectorAll('.metode-btn');
+    let selectedMetodePembayaran = 'Tunai'; // Default method
 
     let keranjang = [];
     let nextManualItemId = 1000;
     let isNominalInputFocused = false;
-    let scannerActive = false; // State for scanner
 
     // --- SETTING STRUK/WHATSAPP ---
     const defaultShopName = "HARINFOOD";
-    const defaultPhoneNumber = "6281235368643";
-    const defaultFooterText = "Terima Terima Kasih!";
+    const displayPhoneNumber = "081235368643";
+    const whatsappPhoneNumber = "6281235368643";
+    const defaultAddress = "Jl Ender Rakit - Gedongan";
+    const defaultFooterText = "Terima kasih sehat selalu ya";
+    const qrisImagePath = "qris.webp"; // Path untuk gambar QRIS di web/cetak
+    const qrisDownloadLink = "https://drive.google.com/file/d/1XAOms4tVa2jkkkCdXRwbNIGy0dvu7RIk/view?usp=drivesdk"; // Link download QRIS
 
     // --- UTILITAS FORMAT RUPIAH ---
     const formatRupiah = (number) => {
@@ -101,7 +105,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function displayProduk() {
         produkList.innerHTML = '';
         produkData.forEach(produk => {
-            // Cek item di keranjang berdasarkan ID produk dan pastikan bukan item manual
             let itemInCart = keranjang.find(item => item.id === produk.id && !item.isManual);
             let qty = itemInCart ? itemInCart.qty : 0;
             const produkDiv = document.createElement('div');
@@ -166,24 +169,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- TAMBAH KE KERANJANG (PERBAIKAN LOGIKA DUPLIKASI) ---
+    // --- TAMBAH KE KERANJANG ---
     function tambahKeKeranjang(produkSumber) {
         let productToAdd;
 
-        // Tentukan apakah produk berasal dari produkData (berdasarkan ID atau barcode)
-        // atau produk manual (berdasarkan isManual)
         if (produkSumber.isManual) {
-            productToAdd = { ...produkSumber }; // Ini adalah produk manual baru
+            productToAdd = { ...produkSumber };
         } else {
-            // Ini produk dari daftar produkData atau hasil scan
-            // Cari item yang sudah ada di keranjang berdasarkan ID atau barcode (jika ada)
-            // Penting: Pastikan id produk manual tidak bentrok dengan id produk regular
             const existingItem = keranjang.find(item => {
-                // Cek jika produk reguler (bukan manual) dengan ID yang sama
                 if (!item.isManual && item.id === produkSumber.id) {
                     return true;
                 }
-                // Cek jika produk yang akan ditambahkan memiliki barcode dan item yang ada juga memiliki barcode yang sama
                 if (produkSumber.barcode && item.barcode && item.barcode === produkSumber.barcode) {
                     return true;
                 }
@@ -194,29 +190,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 existingItem.qty += (produkSumber.qty || 1);
                 updateKeranjang();
                 updateProdukControls();
-                return; // Berhenti di sini karena qty sudah ditambahkan
+                return;
             } else {
                 productToAdd = { ...produkSumber };
-                // Pastikan qty default 1 jika tidak disediakan
                 productToAdd.qty = produkSumber.qty || 1;
             }
         }
 
-        // Jika tidak ada item yang cocok atau ini adalah produk manual baru
         if (productToAdd.isManual && !productToAdd.hasOwnProperty('id')) {
-            productToAdd.id = nextManualItemId++; // Berikan ID unik untuk produk manual
-        } else if (!productToAdd.hasOwnProperty('id') && !productToAdd.barcode) {
-            // Ini kasus fallback jika tidak ada ID atau barcode (misal: penambahan produk tanpa ID/barcode dari sumber lain)
-            // Kita bisa tetapkan sebagai manual juga atau berikan ID unik sementara
             productToAdd.id = nextManualItemId++;
-            productToAdd.isManual = true; // Menganggapnya sebagai manual jika tidak ada ID/barcode
+        } else if (!productToAdd.hasOwnProperty('id') && !productToAdd.barcode) {
+            productToAdd.id = nextManualItemId++;
+            productToAdd.isManual = true;
         }
         
         keranjang.push(productToAdd);
         updateKeranjang();
-        updateProdukControls(); // Ini akan merefresh tampilan produk di katalog
+        updateProdukControls();
     }
-
 
     // --- RENDER KERANJANG BELANJA ---
     function updateKeranjang() {
@@ -239,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
         keranjangTotal.textContent = formatRupiah(total);
-        const totalBelanjaNumeric = total; // Gunakan total langsung
+        const totalBelanjaNumeric = total;
         if (!isNominalInputFocused) {
             const currentNominalValueNumeric = parseFloat(nominalPembayaranInput.value) || 0;
             const isCurrentlyEmptyOrZero = nominalPembayaranInput.value === '' || currentNominalValueNumeric === 0;
@@ -339,58 +330,86 @@ document.addEventListener('DOMContentLoaded', () => {
         const formattedDate = tanggalWaktu.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' });
         const formattedTime = tanggalWaktu.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
-        const printWindow = window.open('', '_blank');
-        printWindow.document.write('<html><head><title>Struk Belanja</title>');
-        printWindow.document.write('<link rel="stylesheet" href="style.css">');
-        printWindow.document.write('</head><body>');
-        printWindow.document.write('<div id="print-area">');
-        printWindow.document.write('<div class="print-header">');
-        printWindow.document.write(`<h2>${defaultShopName}</h2>`);
-        printWindow.document.write(`<p>Telp: ${defaultPhoneNumber}</p>`);
-        printWindow.document.write('</div>');
-        printWindow.document.write('<div class="print-info">');
-        printWindow.document.write(`<p>Pelanggan: ${namaPemesan || '-'}</p>`);
-        printWindow.document.write(`<p>Alamat: ${alamatPemesan || '-'}</p>`);
-        printWindow.document.write(`<p>Tanggal: ${formattedDate}</p>`);
-        printWindow.document.write(`<p>Jam: ${formattedTime}</p>`);
-        printWindow.document.write('</div>');
+        const includeQris = (selectedMetodePembayaran === 'QRIS');
+
+        let printContent = `
+            <html>
+            <head>
+                <title>Struk Belanja</title>
+                <link rel="stylesheet" href="style.css">
+            </head>
+            <body>
+                <div id="print-area">
+                    <div class="print-header">
+                        <p class="shop-name-print">${defaultShopName}</p>
+                        <p class="shop-address-print">${defaultAddress}</p>
+                        <p class="shop-phone-print">${displayPhoneNumber}</p>
+                    </div>
+                    <div class="print-info">
+                        <p>Pelanggan: ${namaPemesan || '-'}</p>
+                        <p>Alamat: ${alamatPemesan || '-'}</p>
+                        <p>Tanggal: ${formattedDate}</p>
+                        <p>Jam: ${formattedTime}</p>
+                        <p>Pembayaran: ${selectedMetodePembayaran}</p>
+                    </div>
+        `;
         if (keteranganPesanan) {
-            printWindow.document.write('<div class="print-notes">');
-            printWindow.document.write(`<p>Catatan: ${keteranganPesanan}</p>`);
-            printWindow.document.write('</div>');
+            printContent += `
+                    <div class="print-notes">
+                        <p>Catatan: ${keteranganPesanan}</p>
+                    </div>
+            `;
         }
-        printWindow.document.write('<hr>');
-        printWindow.document.write('<table><tbody>');
+        printContent += `
+                    <hr>
+                    <table><tbody>
+        `;
         keranjang.forEach(item => {
-            printWindow.document.write(`<tr><td>${item.nama} (${item.qty}x)</td><td style="text-align:right;">${formatRupiah(item.harga)}</td></tr>`);
+            printContent += `<tr><td>${item.nama} (${item.qty}x)</td><td style="text-align:right;">${formatRupiah(item.harga)}</td></tr>`;
         });
-        printWindow.document.write('</tbody></table>');
-        printWindow.document.write('<hr>');
-        printWindow.document.write('<p class="total-row"><span>TOTAL:</span> ' + keranjangTotal.textContent + '</p>');
-        printWindow.document.write('<p class="print-payment-info"><span>BAYAR:</span> ' + formatRupiah(nominalPembayaran) + '</p>');
-        printWindow.document.write('<p class="print-payment-info"><span>KEMBALIAN:</span> ' + formatRupiah(kembalian) + '</p>');
-        printWindow.document.write('<div style="text-align: center; margin-top: 10px; margin-bottom: 5px;">');
-        printWindow.document.write('<img src="qris.webp" alt="QRIS Code" style="width: 45mm; height: auto; display: block; margin: 0 auto;">');
-        printWindow.document.write('</div>');
-        printWindow.document.write(`<p class="thank-you">${defaultFooterText} - Scan QRIS Untuk Pembayaran</p>`);
-        printWindow.document.write('</div></body></html>');
+        printContent += `
+                    </tbody></table>
+                    <hr>
+                    <p class="total-row"><span>TOTAL:</span> ${keranjangTotal.textContent}</p>
+                    <p class="print-payment-info"><span>BAYAR:</span> ${formatRupiah(nominalPembayaran)}</p>
+                    <p class="print-payment-info"><span>KEMBALIAN:</span> ${formatRupiah(kembalian)}</p>
+        `;
+
+        if (includeQris) {
+            printContent += `
+                    <div style="text-align: center; margin-top: 10px; margin-bottom: 5px;">
+                        <img src="${qrisImagePath}" alt="QRIS Code" style="width: 45mm; height: auto; display: block; margin: 0 auto; padding-bottom: 5px;">
+                    </div>
+            `;
+            printContent += `<p class="thank-you">${defaultFooterText} - Scan QRIS Untuk Pembayaran</p>`;
+        } else {
+            printContent += `<p class="thank-you">${defaultFooterText}</p>`;
+        }
+
+        printContent += `</div></body></html>`;
+
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(printContent);
         printWindow.document.close();
+
         printWindow.focus();
+        
         setTimeout(() => {
             printWindow.print();
-        }, 500);
-        keranjang = [];
-        updateKeranjang();
-        updateProdukControls();
-        namaPemesanInput.value = '';
-        alamatPemesanInput.value = '';
-        keteranganPesananInput.value = '';
-        nominalPembayaranInput.value = 0;
-        document.getElementById('dibawa-pulang').checked = true;
-        hitungKembalian();
+            keranjang = [];
+            updateKeranjang();
+            updateProdukControls();
+            namaPemesanInput.value = '';
+            alamatPemesanInput.value = '';
+            keteranganPesananInput.value = '';
+            nominalPembayaranInput.value = 0;
+            document.getElementById('dibawa-pulang').checked = true;
+            hitungKembalian();
+        }, 300);
+
     });
 
-    // --- PESAN WHATSAPP ---
+    // --- PESAN WHATSAPP (Diperbarui dengan Link QRIS) ---
     pesanWhatsappBtn.addEventListener('click', () => {
         const namaPemesan = namaPemesanInput.value.trim();
         const alamatPemesan = alamatPemesanInput.value.trim();
@@ -414,11 +433,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const formattedDate = tanggalWaktu.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' });
         const formattedTime = tanggalWaktu.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
+        // NEW: Ambil metode pembayaran yang dipilih dari tombol aktif
+        // selectedMetodePembayaran sudah di-maintain oleh event listener tombol
+        const isQrisPayment = (selectedMetodePembayaran === 'QRIS');
+
         let whatsappMessage = `*${defaultShopName}*\n`;
-        whatsappMessage += `Telp: ${defaultPhoneNumber}\n`;
+        whatsappMessage += `Telp: ${displayPhoneNumber}\n`;
+        whatsappMessage += `Alamat: ${defaultAddress}\n`; // Menambahkan alamat di pesan WhatsApp
         whatsappMessage += "-----------------------------\n";
         whatsappMessage += `Pelanggan: ${namaPemesan || '-'}\n`;
-        whatsappMessage += `Alamat: ${alamatPemesan || '-'}\n`;
+        whatsappMessage += `Alamat Pengiriman: ${alamatPemesan || '-'}\n`; // Membedakan Alamat Pemesan dengan Alamat Toko
         whatsappMessage += `Tanggal: ${formattedDate}\n`;
         whatsappMessage += `Jam: ${formattedTime}\n`;
         whatsappMessage += "-----------------------------\n";
@@ -428,14 +452,24 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         whatsappMessage += "-----------------------------\n";
         whatsappMessage += `*Total: ${keranjangTotal.textContent}*\n`;
+        whatsappMessage += `*Metode Pembayaran: ${selectedMetodePembayaran}*\n`; // Menambahkan metode pembayaran
         whatsappMessage += `*Bayar: ${formatRupiah(nominalPembayaran)}*\n`;
         whatsappMessage += `*Kembalian: ${formatRupiah(kembalian)}*\n\n`;
+        
         if (keteranganPesanan) {
             whatsappMessage += `*Catatan:*\n${keteranganPesanan}\n\n`;
         }
-        whatsappMessage += defaultFooterText;
+
+        // NEW: Logika untuk menyematkan link QRIS
+        if (isQrisPayment) {
+            whatsappMessage += `Untuk pembayaran QRIS, silakan download gambar QRIS di sini:\n${qrisDownloadLink}\n\n`;
+            whatsappMessage += `*${defaultFooterText} - Mohon Segera Selesaikan Pembayaran Anda.*`; // Ubah footer khusus QRIS
+        } else {
+            whatsappMessage += defaultFooterText; // Footer default untuk tunai
+        }
+
         const encodedMessage = encodeURIComponent(whatsappMessage);
-        const whatsappURL = `https://wa.me/${defaultPhoneNumber}?text=${encodedMessage}`;
+        const whatsappURL = `https://wa.me/${whatsappPhoneNumber}?text=${encodedMessage}`;
         window.open(whatsappURL, '_blank');
         alert('Struk telah disiapkan di WhatsApp. Silakan pilih kontak dan kirim!');
     });
@@ -469,109 +503,75 @@ document.addEventListener('DOMContentLoaded', () => {
         closeManualOrderModal();
     };
 
-    // --- BARCODE SCANNER INTEGRATION ---
-    // Event listener untuk FAB Scan Barcode
+    // --- BARCODE SCANNER EKSTERNAL (dengan pop-up) ---
+
+    // Event listener untuk FAB Scan Barcode -> buka modal
     scanBarcodeFab.addEventListener('click', () => {
         barcodeScannerModal.style.display = 'flex';
-        scanFeedback.textContent = 'Mencari barcode...';
-        stopScannerButton.style.display = 'block'; // Show stop button
-        startScanner();
+        barcodeInput.value = ''; // Bersihkan input
+        scanFeedback.textContent = 'Siap menerima barcode...';
+        barcodeInput.focus(); // Fokuskan input di dalam modal
     });
 
+    // Fungsi untuk menutup modal barcode
     window.closeBarcodeScannerModal = function() {
         barcodeScannerModal.style.display = 'none';
-        stopScanner();
+        barcodeInput.blur(); // Hapus fokus dari input
+        barcodeInput.value = ''; // Pastikan input bersih
     };
 
-    stopScannerButton.addEventListener('click', () => {
-        closeBarcodeScannerModal();
+    // Event listener untuk tombol "Tambahkan" di modal barcode
+    submitBarcodeButton.addEventListener('click', () => {
+        const scannedBarcode = barcodeInput.value.trim();
+        if (scannedBarcode) {
+            processScannedBarcode(scannedBarcode);
+        } else {
+            scanFeedback.textContent = 'Barcode tidak boleh kosong.';
+        }
     });
 
-    function startScanner() {
-        if (scannerActive) return; // Prevent multiple instances
-        scannerActive = true;
-        scanFeedback.textContent = 'Mencari barcode...';
-
-        Quagga.init({
-            inputStream: {
-                name: "Live",
-                type: "LiveStream",
-                target: document.querySelector('#interactive'), // Target div for the video stream
-                constraints: {
-                    facingMode: "environment" // Use rear camera on mobile
-                },
-            },
-            decoder: {
-                // Konfigurasi pembaca barcode. Anda bisa menyesuaikannya.
-                // ean_reader dan ean_8_reader umum untuk produk retail.
-                readers: ["ean_reader", "ean_8_reader", "upc_reader", "upc_e_reader", "code_128_reader", "code_39_reader"]
-            }
-        }, function(err) {
-            if (err) {
-                console.error(err);
-                scanFeedback.textContent = 'Gagal memulai kamera. Pastikan browser memiliki izin.';
-                scannerActive = false;
-                return;
-            }
-            console.log("Initialization finished. Ready to start");
-            Quagga.start();
-        });
-
-        Quagga.onDetected(function(result) {
-            const barcode = result.codeResult.code;
-            console.log("Barcode detected:", barcode);
-            scanFeedback.textContent = `Barcode terdeteksi: ${barcode}`;
-
-            // Cari produk di produkData berdasarkan barcode
-            const foundProduct = produkData.find(p => p.barcode === barcode);
-
-            if (foundProduct) {
-                tambahKeKeranjang(foundProduct);
-                scanFeedback.textContent = `Produk "${foundProduct.nama}" ditambahkan!`;
-                // Secara opsional, hentikan scanning setelah berhasil scan
-                // Anda bisa menghapus atau mengubah timeout ini jika ingin scan terus-menerus
-                setTimeout(() => {
-                    closeBarcodeScannerModal();
-                }, 1000); // Tutup modal setelah 1 detik
+    // Event listener untuk Enter di input barcode modal (untuk scanner hardware)
+    barcodeInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault(); // Mencegah form submit
+            const scannedBarcode = barcodeInput.value.trim();
+            if (scannedBarcode) {
+                processScannedBarcode(scannedBarcode);
             } else {
-                scanFeedback.textContent = `Barcode ${barcode} tidak ditemukan di katalog. Coba lagi.`;
+                scanFeedback.textContent = 'Barcode tidak boleh kosong.';
             }
-        });
+        }
+    });
 
-        Quagga.onProcessed(function(result) {
-            var drawingCtx = Quagga.canvas.ctx.overlay,
-                drawingCanvas = Quagga.canvas.dom.overlay;
+    // Fungsi untuk memproses barcode yang discan
+    function processScannedBarcode(barcode) {
+        console.log("Processing scanned barcode:", barcode);
+        const foundProduct = produkData.find(p => p.barcode === barcode);
 
-            if (result) {
-                if (result.boxes) {
-                    drawingCtx.clearRect(0, 0, parseInt(drawingCanvas.getAttribute("width")), parseInt(drawingCanvas.getAttribute("height")));
-                    result.boxes.filter(function (box) {
-                        return box !== result.box;
-                    }).forEach(function (box) {
-                        Quagga.ImageDebug.drawPath(box, {x: 0, y: 1}, drawingCtx, {color: "green", lineWidth: 2});
-                    });
-                }
-
-                if (result.box) {
-                    Quagga.ImageDebug.drawPath(result.box, {x: 0, y: 1}, drawingCtx, {color: "#00F0FF", lineWidth: 2});
-                }
-
-                if (result.codeResult && result.codeResult.code) {
-                    Quagga.ImageDebug.drawPath(result.line, {x: 'x', y: 'y'}, drawingCtx, {color: "red", lineWidth: 3});
-                }
-            }
-        });
-    }
-
-    function stopScanner() {
-        if (scannerActive) {
-            Quagga.stop();
-            scannerActive = false;
-            console.log("Scanner stopped.");
-            scanFeedback.textContent = '';
-            stopScannerButton.style.display = 'none'; // Sembunyikan tombol stop
+        if (foundProduct) {
+            tambahKeKeranjang(foundProduct);
+            scanFeedback.textContent = `Produk "${foundProduct.nama}" ditambahkan!`;
+            barcodeInput.value = ''; // Bersihkan input setelah berhasil
+            barcodeInput.focus(); // Fokuskan kembali untuk scan berikutnya
+        } else {
+            scanFeedback.textContent = `Barcode ${barcode} tidak ditemukan di katalog. Coba lagi.`;
+            barcodeInput.value = ''; // Bersihkan input agar bisa coba lagi
+            barcodeInput.focus(); // Fokuskan kembali
         }
     }
+
+    // --- LOGIKA TOMBOL METODE PEMBAYARAN ---
+    metodePembayaranButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            // Hapus kelas 'active' dari semua tombol
+            metodePembayaranButtons.forEach(btn => btn.classList.remove('active'));
+            // Tambahkan kelas 'active' ke tombol yang diklik
+            button.classList.add('active');
+            // Simpan metode pembayaran yang dipilih
+            selectedMetodePembayaran = button.dataset.metode;
+            console.log("Metode pembayaran dipilih:", selectedMetodePembayaran);
+        });
+    });
 
     // --- INISIALISASI APP ---
     displayProduk();
@@ -594,5 +594,4 @@ function hidePilihanMakan() {
     });
 }
 
-// Jalankan saat halaman sudah siap
 document.addEventListener('DOMContentLoaded', hidePilihanMakan);
